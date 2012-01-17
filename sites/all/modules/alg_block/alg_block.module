@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * Implementation of hook_menu().
+ *
+ * @return An array of menu items.
+ */
+function alg_block_menu() {
+  $items = array();
+
+  $items['test/block'] = array(
+    'page callback' => 'alg_display_test',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_block().
+ *
+ * @param $op What kind of information to retrieve about the block. Possible values: list, configure, save, view.
+ * @param $delta Which block to return.
+ * @param $edit Data from a configuration form, if submitted.
+ */
+function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
+
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      $blocks['block_test'] = array(
+        'info' => 'Dossier Légal',
+        'status' => 1,
+        'region' => 'footer',
+      );
+      $blocks['block_2'] = array(
+        'info' => t('Block 2'),
+        'status' => TRUE,
+        'region' => 'content',
+        'visibility' => 1,
+        'page' => 'test/block',
+        'cache' => BLOCK_NO_CACHE,
+      );
+      $blocks += _alg_block_doc_parser();
+
+      return $blocks;
+      break;
+
+    case 'view':
+      $block = array();
+      switch ($delta) {
+        case 'block_test':
+          $block['subject'] = 'Dossier Légal';
+          $block['content'] = 'tototototototo';
+          break;
+        case 'block_2':
+          $block['subject'] = 'Block 2';
+          $block['content'] = 'Block 2';
+          break;
+      }
+      return $block;
+      break;
+  }
+}
+
+function alg_display_test() {
+  return TRUE;
+}
+
+
+/**
+ * Parse files in includes dir for create block list
+ * 
+ * @return array
+ */
+function _alg_block_doc_parser() {
+  $GLOBALS['results'] = array();
+  $path = drupal_get_path('module', 'alg_block') . '/includes';
+
+  $files = file_scan_directory($path, '\.inc$', array('.', '..'), '_alg_block_file_scan_directory');
+
+  return array();
+}
+
+/**
+ * Callback for file_scan_directory
+ * 
+ * @staticvar array $results
+ * @param string $filename
+ */
+function _alg_block_file_scan_directory($filename) {
+  $code = file_get_contents($filename);
+  $result = array();
+  $pattern = '#@([a-zA-Z]*) (.*)#';
+  preg_match_all($pattern, $code, $result, PREG_SET_ORDER);
+
+  $GLOBALS['results'] += array($filename => $result);
+}
