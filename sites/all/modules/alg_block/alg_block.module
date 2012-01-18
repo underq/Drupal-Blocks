@@ -67,32 +67,35 @@ function alg_display_test() {
   return TRUE;
 }
 
-
 /**
  * Parse files in includes dir for create block list
  * 
  * @return array
  */
 function _alg_block_doc_parser() {
-  $GLOBALS['results'] = array();
-  $path = drupal_get_path('module', 'alg_block') . '/includes';
+  $path = drupal_get_path('module', 'alg_block') . '/blocks';
 
-  $files = file_scan_directory($path, '\.inc$', array('.', '..'), '_alg_block_file_scan_directory');
+  $files = file_scan_directory($path, '\.inc$', array('.', '..','*.txt'));
+  $results = array();
+  foreach ($files as $file) {
+    $results[$file->name]= _alg_block_file_scan_directory($file->filename);
+  }
 
-  return array();
+  return $results;
 }
 
 /**
  * Callback for file_scan_directory
  * 
- * @staticvar array $results
  * @param string $filename
  */
 function _alg_block_file_scan_directory($filename) {
   $code = file_get_contents($filename);
   $result = array();
   $pattern = '#@([a-zA-Z]*) (.*)#';
-  preg_match_all($pattern, $code, $result, PREG_SET_ORDER);
+  preg_match_all($pattern, $code, $result);
 
-  $GLOBALS['results'] += array($filename => $result);
+  $result = array_combine($result[1],$result[2]);
+
+  return $result;
 }
