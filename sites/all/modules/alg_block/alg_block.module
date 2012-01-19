@@ -28,38 +28,26 @@ function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
       $blocks = array();
-      $blocks['block_test'] = array(
-        'info' => 'Dossier Légal',
+      $blocks['test'] = array(
+        'info' => 'block de test',
         'status' => 1,
         'region' => 'footer',
-      );
-      $blocks['block_2'] = array(
-        'info' => t('Block 2'),
-        'status' => TRUE,
-        'region' => 'content',
-        'visibility' => 1,
-        'page' => 'test/block',
-        'cache' => BLOCK_NO_CACHE,
-      );
+        'visibility' => 0,
+        'pages' => '',
+        );
       $blocks += _alg_block_doc_parser();
-
       return $blocks;
       break;
 
     case 'view':
-      $block = array();
-      switch ($delta) {
-        case 'block_test':
-          $block['subject'] = 'Dossier Légal';
-          $block['content'] = 'tototototototo';
-          break;
-        case 'block_2':
-          $block['subject'] = 'Block 2';
-          $block['content'] = 'Block 2';
-          break;
+      $path = drupal_get_path('module', 'alg_block') . '/blocks/';
+      if (file_exists($path . $delta . '.inc')) {
+        include 'blocks/' . $delta . '.inc';
+        return $delta();
       }
-      return $block;
-      break;
+      else {
+        return array();
+      }
   }
 }
 
@@ -75,10 +63,10 @@ function alg_display_test() {
 function _alg_block_doc_parser() {
   $path = drupal_get_path('module', 'alg_block') . '/blocks';
 
-  $files = file_scan_directory($path, '\.inc$', array('.', '..','*.txt'));
+  $files = file_scan_directory($path, '\.inc$', array('.', '..', '*.txt'));
   $results = array();
   foreach ($files as $file) {
-    $results[$file->name]= _alg_block_file_scan_directory($file->filename);
+    $results[$file->name] = _alg_block_file_scan_directory($file->filename);
   }
 
   return $results;
@@ -86,8 +74,9 @@ function _alg_block_doc_parser() {
 
 /**
  * Callback for file_scan_directory
- * 
+ *
  * @param string $filename
+ * @return array()
  */
 function _alg_block_file_scan_directory($filename) {
   $code = file_get_contents($filename);
@@ -95,7 +84,9 @@ function _alg_block_file_scan_directory($filename) {
   $pattern = '#@([a-zA-Z]*) (.*)#';
   preg_match_all($pattern, $code, $result);
 
-  $result = array_combine($result[1],$result[2]);
+  if (!$result = array_combine($result[1], $result[2])) {
+    $result = array();
+  }
 
   return $result;
 }
