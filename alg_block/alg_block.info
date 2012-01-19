@@ -1,0 +1,5 @@
+name = ALG Block
+description = Test system of block
+core = 6.x
+php = 5.x
+package = ALG
