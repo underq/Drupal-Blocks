@@ -1,14 +1,17 @@
 <?php
 
-
 /**
- * @Info Mon block 3
- * @Region sidebar
- * @Visibility 2
- * @Pages mes_documents_3
- * @Status 1
- * @Cache BLOCK_CACHE_PER_ROLE
+ * @info Mon block 3
+ * @region content
+ * @visibility 0
+ * @pages
+ * @status 1
+ * @cache BLOCK_CACHE_PER_ROLE
+ * @custom FALSE
  */
-function mon_module_block_mon_block() {
-       return "contenu de mon block";
+function block_3() {
+  return array(
+    'subject' => t('Block 3'),
+    'content' => 'looooooooooooool',
+  );
 }

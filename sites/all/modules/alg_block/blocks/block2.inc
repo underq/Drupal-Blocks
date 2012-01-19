@@ -2,13 +2,16 @@
 
 
 /**
- * @Info Mon block
- * @Region sidebar
- * @Visibility 2
- * @Pages mes_documents
- * @Status 1
- * @Cache BLOCK_CACHE_PER_ROLE
+ * @info Block 2
+ * @region footer
+ * @visibility 1
+ * @pages test/block toto/block
+ * @status 1
+ * @cache BLOCK_NO_CACHE
  */
-function mon_module_block_mon_block() {
-       return "contenu de mon block";
+function block2() {
+       return array(
+         'subject' => t('Block 2'),
+         'content' => 'looooooooooooool',
+       );
 }
