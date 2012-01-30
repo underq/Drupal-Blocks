@@ -48,7 +48,7 @@ function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
     case 'view':
       if (file_exists($path . $delta . '.inc')) {
         include 'blocks/' . $delta . '.inc';
-        return $delta;
+        return $delta();
       }
   }
 }
