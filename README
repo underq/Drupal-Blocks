@@ -1,2 +1,5 @@
+ALG Blocks
+-----------
+
 This project is module sample which create a custom block handler for drupal 6.x
 It defines blocks parameters from specific comments and load them from predefined files with the use of the parameters.
