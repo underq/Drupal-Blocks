@@ -8,12 +8,21 @@
 function alg_block_menu() {
   $items = array();
 
-  $items['test/block'] = array(
-    'page callback' => 'alg_display_test',
+  $items['page/1'] = array(
+    'page callback' => '_alg_block_page_1',
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
   return $items;
+}
+
+/**
+ * function callback for page 1
+ *
+ * @return boolean
+ */
+function _alg_block_page_1() {
+  return 'Page N°1';
 }
 
 /**
@@ -24,63 +33,60 @@ function alg_block_menu() {
  * @param $edit Data from a configuration form, if submitted.
  */
 function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
+  static $path = '';
+  if (empty($path)) {
+    $path = drupal_get_path('module', 'alg_block') . '/blocks/';
+  }
 
   switch ($op) {
     case 'list':
       $blocks = array();
-      $blocks += _alg_block_doc_parser();
+      $blocks += _alg_block_path_parser($path);
       return $blocks;
       break;
 
     case 'view':
-      $path = drupal_get_path('module', 'alg_block') . '/blocks/';
       if (file_exists($path . $delta . '.inc')) {
         include 'blocks/' . $delta . '.inc';
-        return $delta();
-      }
-      else {
-        return array();
+        return $delta;
       }
   }
 }
 
-function alg_display_test() {
-  return TRUE;
-}
-
 /**
- * Parse files in blocks dir for create block list
+ * Parse path for found all files and return blocks info
  * 
  * @return array
  */
-function _alg_block_doc_parser() {
-  $path = drupal_get_path('module', 'alg_block') . '/blocks';
+function _alg_block_path_parser($path) {
+  $results = array();
 
   $files = file_scan_directory($path, '\.inc$', array('.', '..', '*.txt'));
-  $results = array();
   foreach ($files as $file) {
-    if (!$results[$file->name] = _alg_block_comment_parser($file->filename))
-      unset($results[$file->name]);
+    $block = array();
+    if (_alg_block_comment_parser($file, $block) !== FALSE) {
+      $results += $block;
+    }
   }
   return $results;
 }
 
 /**
- * Parse comments and create an array of block parametre
+ * Parse comments and create an array of block parametres
  *
  * @param string $filename
  * @return array()
  */
-function _alg_block_comment_parser($filename) {
-  $code = file_get_contents($filename);
+function _alg_block_comment_parser($file, &$block) {
   $result = array();
-  $pattern = '#@([a-zA-Z]*) ([\w-/ ]*)#';
-  if (preg_match_all($pattern, $code, $result) == 0) {
+  $code = file_get_contents($file->filename);
+  $pattern = '#@([a-zA-Z]*) ([\w-/ {\|}]*)#';
+  if (preg_match_all($pattern, $code, $result) != 0) {
+    if (!$block[$file->name] = array_combine($result[1], str_replace('|', "\n", $result[2]))) {
+      return FALSE;
+    }
+  }
+  else {
     return FALSE;
   }
-  else if (!$result = array_combine($result[1], $result[2])) {
-    return FALSE;
-  }
-
-  return $result;
 }
