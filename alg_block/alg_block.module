@@ -26,6 +26,15 @@ function _alg_block_page_1() {
 }
 
 /**
+ * Implementation of hook_alg_block()
+ */
+function alg_bock_alg_block(){
+  return array(
+    'directory' => 'blocks',
+  );
+}
+
+/**
  * Implementation of hook_block().
  *
  * @param $op What kind of information to retrieve about the block. Possible values: list, configure, save, view.
@@ -33,20 +42,16 @@ function _alg_block_page_1() {
  * @param $edit Data from a configuration form, if submitted.
  */
 function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
-  static $path = '';
-  if (empty($path)) {
-    $path = drupal_get_path('module', 'alg_block') . '/blocks/';
-  }
-
   switch ($op) {
     case 'list':
       $blocks = array();
-      $blocks += _alg_block_path_parser($path);
+      $blocks += _alg_block_path_parser();
       return $blocks;
       break;
 
     case 'view':
-      if (file_exists($path . $delta . '.inc')) {
+      return _alg_blok_view_block($delta);
+      if (file_exists($delta . '.inc')) {
         include 'blocks/' . $delta . '.inc';
         return $delta();
       }
@@ -61,13 +66,20 @@ function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
 function _alg_block_path_parser($path) {
   $results = array();
 
-  $files = file_scan_directory($path, '\.inc$', array('.', '..', '*.txt'));
-  foreach ($files as $file) {
-    $block = array();
-    if (_alg_block_comment_parser($file, $block) !== FALSE) {
-      $results += $block;
+  foreach (module_implements('alg_block') as $module) { 
+    // Get directory path where blocks files are defined
+    $directory = module_invoke($module, 'alg_block');
+    $path = drupal_get_path('module', $module) . '/' . $directory['directory'];
+    
+    $files = file_scan_directory($path, '\.inc$');
+    foreach ($files as $file) {
+      $block = array();
+      if (_alg_block_comment_parser($file, $module, $block) !== FALSE) {
+        $results += $block;
+      }
     }
   }
+  
   return $results;
 }
 
@@ -77,16 +89,35 @@ function _alg_block_path_parser($path) {
  * @param string $filename
  * @return array()
  */
-function _alg_block_comment_parser($file, &$block) {
+function _alg_block_comment_parser($file, $module, &$block) {
   $result = array();
   $code = file_get_contents($file->filename);
   $pattern = '#@([a-zA-Z]*) ([\w-/ {\|}]*)#';
   if (preg_match_all($pattern, $code, $result) != 0) {
-    if (!$block[$file->name] = array_combine($result[1], str_replace('|', "\n", $result[2]))) {
+    if (!$block[$module . '-' . $file->name] = array_combine($result[1], str_replace('|', "\n", $result[2]))) {
       return FALSE;
     }
   }
   else {
     return FALSE;
   }
+}
+
+/**
+ * Get the delta file fonction 
+ */
+function _alg_block_view_block($delta){
+  // Explode delta's name for get module and filename
+  $details = array();
+  $details = explode('-', $delta,1);
+  
+  $directory = module_invoke($details[0], 'alg_block');
+  $path = drupal_get_path('module', $details[0]) . '/' . $directory['directory'];
+  $file = $path . '/' . $details[1] . '.inc';
+  
+  if (file_exists($file)) {
+    include $file;
+    return $details[1]();
+  }
+  return FALSE;
 }
