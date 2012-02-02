@@ -28,7 +28,7 @@ function _alg_block_page_1() {
 /**
  * Implementation of hook_alg_block()
  */
-function alg_bock_alg_block(){
+function alg_block_alg_block(){
   return array(
     'directory' => 'blocks',
   );
@@ -50,11 +50,7 @@ function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
       break;
 
     case 'view':
-      return _alg_blok_view_block($delta);
-      if (file_exists($delta . '.inc')) {
-        include 'blocks/' . $delta . '.inc';
-        return $delta();
-      }
+      return _alg_block_view_block($delta);
   }
 }
 
@@ -63,7 +59,7 @@ function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
  * 
  * @return array
  */
-function _alg_block_path_parser($path) {
+function _alg_block_path_parser() {
   $results = array();
 
   foreach (module_implements('alg_block') as $module) { 
@@ -109,7 +105,7 @@ function _alg_block_comment_parser($file, $module, &$block) {
 function _alg_block_view_block($delta){
   // Explode delta's name for get module and filename
   $details = array();
-  $details = explode('-', $delta,1);
+  $details = explode('-', $delta,2);
   
   $directory = module_invoke($details[0], 'alg_block');
   $path = drupal_get_path('module', $details[0]) . '/' . $directory['directory'];
