@@ -15,3 +15,29 @@ function block_left() {
     'content' => 'Left Menu block',
   );
 }
+
+
+// Class qui sers de modele à tous les blocks
+class Block{
+  static $info
+  static $region
+  static $visibility
+  static $pages
+  static $cache
+  static $weight
+  
+  public function output();    
+    
+}
+
+// class fille qui definit le block demander
+class BlockLeft extends Block{
+  public function output(){
+    
+    return array(
+      'subject' => t('Block Left'),
+      'content' => 'Left Menu block',
+    );
+  }
+  
+}
