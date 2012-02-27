@@ -1,5 +1,5 @@
 name = ALG Block
-description = Test system of block
+description = Test system of block reborn
 core = 6.x
 php = 5.x
 package = ALG
