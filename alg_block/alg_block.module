@@ -8,7 +8,7 @@
 require_once __DIR__ . '/alg_block.interface.inc';
 
 /**
- * Implementation hook_alg_block_router().
+ * Implementats hook_alg_block_router().
  */
 function alg_block_alg_block_router() {
   return array(
@@ -18,15 +18,15 @@ function alg_block_alg_block_router() {
 }
 
 /**
- * Implementation hook_block().
+ * Implements hook_block().
  *
- * @param $op
- * What kind of information to retrieve about the block.
- * Possible values: list, configure, save, view.
- * @param $delta
- * Which block to return.
- * @param $edit
- * Data from a configuration form, if submitted.
+ * @param string $op
+ *   What kind of information to retrieve about the block.
+ *   Possible values: list, configure, save, view.
+ * @param string $delta
+ *   Which block to return.
+ * @param array $edit
+ *   Data from a configuration form, if submitted.
  */
 function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
   // Get router instance.

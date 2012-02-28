@@ -33,7 +33,7 @@ class alg_block_router {
   /**
    * Get instance of alg_block_router class
    * @return object
-   * alg_block_router object
+   *   alg_block_router object
    */
   public static function getInstance() {
     // Si l'instance n'existe pas encore, alors elle est créée.
@@ -46,9 +46,9 @@ class alg_block_router {
 
   /**
    * Get block instance of delta block
-   * 
+   *
    * @param string $delta
-   * 
+   *
    * @return object
    */
   private function getBlockInstance($delta) {
@@ -61,7 +61,7 @@ class alg_block_router {
 
   /**
    * List all block which are in module blocks dir
-   * 
+   *
    * @return array
    */
   public function listBlock() {
@@ -76,9 +76,9 @@ class alg_block_router {
 
   /**
    * View block delta
-   * 
+   *
    * @param string $delta
-   * 
+   *
    * @return array
    */
   public function viewBlock($delta) {
