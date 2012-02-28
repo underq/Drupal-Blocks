@@ -3,31 +3,25 @@
 require_once __DIR__ . '/alg_block.interface.inc';
 
 /**
- * Implementation of hook_menu().
- *
- * @return An array of menu items.
+ * Implementation of hook_alg_block_router
  */
-function alg_block_menu() {
-  $items = array();
-
-  $items['page/1'] = array(
-    'page callback' => '_alg_block_page_1',
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
+function alg_block_alg_block_router() {
+  return array(
+    'mes_documents' => __DIR__ . '/blocks/mes_documents.block.inc',
+    'mes_fichiers' => __DIR__ . '/blocks/mes_fichiers.block.inc',
   );
-  return $items;
 }
 
 /**
- * function callback for page 1
+ * Implementation of hook_block().
  *
- * @return boolean
+ * @param $op What kind of information to retrieve about the block.
+ * Possible values: list, configure, save, view.
+ * @param $delta Which block to return.
+ * @param $edit Data from a configuration form, if submitted.
  */
-function _alg_block_page_1() {
-  return 'Page N°1';
-}
-
-function alg_block_call_router($op = 'list', $delta = 0, $edit = array()) {
+function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
+  // Get router instance
   require_once drupal_get_path('module', 'alg_block') . '/alg_block.router.inc';
   $router = alg_block_router::getInstance();
 
@@ -47,16 +41,4 @@ function alg_block_call_router($op = 'list', $delta = 0, $edit = array()) {
     default:
       break;
   }
-}
-
-/**
- * Implementation of hook_block().
- *
- * @param $op What kind of information to retrieve about the block.
- * Possible values: list, configure, save, view.
- * @param $delta Which block to return.
- * @param $edit Data from a configuration form, if submitted.
- */
-function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
-  return alg_block_call_router($op, $delta, $edit);
 }

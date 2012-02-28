@@ -1,6 +1,6 @@
 <?php
 
-class mes_documents implements alg_block_interface {
+class mes_fichiers implements alg_block_interface {
 
   public function __construct() {
     
@@ -8,8 +8,8 @@ class mes_documents implements alg_block_interface {
 
   public function getInfo() {
     return array(
-      'info' => 'Header Mes Documents',
-      'region' => 'header',
+      'info' => 'Footer Mes Fichiers',
+      'region' => 'footer',
       'visibility' => 0,
       'pages' => '',
       'status' => 1,
@@ -20,8 +20,8 @@ class mes_documents implements alg_block_interface {
 
   public function getView() {
     return array(
-      'subject' => t('Mes Documents'),
-      'content' => 'HEADER',
+      'subject' => t('Mes Fichiers'),
+      'content' => 'FOOTER',
     );
   }
 

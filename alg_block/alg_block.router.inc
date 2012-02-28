@@ -9,7 +9,16 @@ class alg_block_router {
    * Constructeur privé
    */
   private function __construct() {
-    
+    foreach (module_implements('alg_block_router') as $module) {
+      foreach (module_invoke($module, 'alg_block_router') as $delta => $filepath) {
+        if (file_exists($filepath)) {
+          self::$_blocks[$delta] = $filepath;
+        }
+        else {
+          drupal_set_message(t('Block %delta ! file missing', array('%delta' => $delta)), 'error');
+        }
+      }
+    }
   }
 
   /**
@@ -39,12 +48,9 @@ class alg_block_router {
    * @return object
    */
   private function getBlockInstance($delta) {
-    if (!array_key_exists($delta, self::$_blocks)) {
-      require_once __DIR__ . '/blocks/' . $delta . '.block.inc';
-      self::$_blocks[$delta] = new $delta();
-    }
     if (!self::$_blocks[$delta] instanceof alg_block_interface) {
-      drupal_set_message(t('Le block %delta n\'a pas implémenté l\'interface alg_block_interface', array('%delta' => $delta)), 'error');
+      require_once self::$_blocks[$delta];
+      self::$_blocks[$delta] = new $delta();
     }
     return self::$_blocks[$delta];
   }
@@ -57,12 +63,10 @@ class alg_block_router {
   public function listBlock() {
     $blocks = array();
 
-    $files = file_scan_directory(__DIR__ . '/blocks', '\.block\.inc$');
-    foreach ($files as $file) {
-      require_once $file->filename;
-      $delta = str_replace('.block', '', $file->name);
+    foreach (self::$_blocks as $delta => $filepath) {
       $blocks[$delta] = $this->getBlockInstance($delta)->getInfo();
     }
+
     return $blocks;
   }
 
@@ -73,7 +77,9 @@ class alg_block_router {
    * @return array
    */
   public function viewBlock($delta) {
-    return $this->getBlockInstance($delta)->getView();
+    if (isset(self::$_blocks[$delta])) {
+      return $this->getBlockInstance($delta)->getView();
+    }
   }
 
   public function configureBlock($delta) {
