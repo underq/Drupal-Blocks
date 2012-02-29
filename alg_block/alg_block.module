@@ -31,7 +31,7 @@ function alg_block_alg_block_router() {
 function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
   // Get router instance.
   require_once drupal_get_path('module', 'alg_block') . '/alg_block.router.inc';
-  $router = alg_block_router::getInstance();
+  $router = AlgBlockRouter::getInstance();
 
   switch ($op) {
     case 'list':

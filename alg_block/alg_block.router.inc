@@ -1,10 +1,11 @@
 <?php
+
 /**
  * @file
  * Provide a class for handler block
  */
 
-class alg_block_router {
+class AlgBlockRouter {
 
   private static $blocks = array();
   private static $instance = FALSE;
@@ -38,7 +39,7 @@ class alg_block_router {
   public static function getInstance() {
     // Si l'instance n'existe pas encore, alors elle est créée.
     if (self::$instance === FALSE) {
-      self::$instance = new alg_block_router();
+      self::$instance = new AlgBlockRouter();
     }
     // L'instance existe, on peut la retourner à l'extérieur.
     return self::$instance;
@@ -52,7 +53,7 @@ class alg_block_router {
    * @return object
    */
   private function getBlockInstance($delta) {
-    if (!self::$blocks[$delta] instanceof alg_block_interface) {
+    if (!self::$blocks[$delta] instanceof AlgBlockInterface) {
       require_once self::$blocks[$delta];
       self::$blocks[$delta] = new $delta();
     }
@@ -67,7 +68,7 @@ class alg_block_router {
   public function listBlock() {
     $blocks = array();
 
-    foreach (self::$blocks as $delta => $filepath) {
+    foreach (array_keys(self::$blocks) as $delta) {
       $blocks[$delta] = $this->getBlockInstance($delta)->getInfo();
     }
 

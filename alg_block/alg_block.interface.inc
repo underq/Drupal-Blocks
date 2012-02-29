@@ -1,15 +1,24 @@
 <?php
+
 /**
  * @file
- * This interface will be used by all custom file block
+ * Defines a common interface for a prepared block.
  */
 
-interface alg_block_interface {
+interface AlgBlockInterface {
 
+  /**
+   * Get prepared block info.
+   */
   public function getInfo();
 
+  /**
+   * Get prepared block view.
+   */
   public function getView();
 
+  /**
+   * Get prepared block form.
+   */
   public function getForm();
-  
 }

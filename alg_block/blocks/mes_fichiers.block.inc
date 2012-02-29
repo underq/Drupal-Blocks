@@ -1,9 +1,9 @@
 <?php
 
-class mes_fichiers implements alg_block_interface {
+class mes_fichiers implements AlgBlockInterface {
 
   public function __construct() {
-    
+
   }
 
   public function getInfo() {
