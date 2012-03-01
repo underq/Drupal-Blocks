@@ -4,7 +4,6 @@
  * @file
  * Provide a class for handler block
  */
-
 class AlgBlockRouter {
 
   private static $blocks = array();
@@ -14,22 +13,15 @@ class AlgBlockRouter {
    * Constructeur privé
    */
   private function __construct() {
-    foreach (module_implements('alg_block_router') as $module) {
-      foreach (module_invoke($module, 'alg_block_router') as $delta => $filepath) {
-        if (file_exists($filepath)) {
-          self::$blocks[$delta] = $filepath;
-        }
-        else {
-          drupal_set_message(t('Block %delta ! file missing', array('%delta' => $delta)), 'error');
-        }
-      }
-    }
+    self::$blocks = module_invoke_all('alg_block_router');
   }
 
   /**
    * Le clonage interdit
    */
-  private function __clone() {}
+  private function __clone() {
+
+  }
 
   /**
    * Get instance of alg_block_router class
@@ -93,7 +85,7 @@ class AlgBlockRouter {
   }
 
   public function saveBlock($delta, $edit) {
-
+    
   }
-  
+
 }
