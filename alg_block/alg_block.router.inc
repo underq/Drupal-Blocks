@@ -4,10 +4,13 @@
  * @file
  * Provide a class for handler block
  */
-class AlgBlockRouter {
+
+final class AlgBlockRouter {
 
   private static $blocks = array();
   private static $instance = FALSE;
+
+  const MODULE_NAME = 'alg_block';
 
   /**
    * Constructeur privé
@@ -38,16 +41,26 @@ class AlgBlockRouter {
   }
 
   /**
-   * Get block instance of delta block
+   * Get block instance from delta
+   * Try Factory Design Pattern
    *
    * @param string $delta
+   *   Which block to return
    *
    * @return object
+   *   Block object
    */
-  private function getBlockInstance($delta) {
-    if (!self::$blocks[$delta] instanceof AlgBlockInterface) {
+  protected function getBlockInstance($delta) {
+
+    // Instance Object.
+    if (!is_object(self::$blocks[$delta])) {
       require_once self::$blocks[$delta];
       self::$blocks[$delta] = new $delta();
+    }
+
+    // Check instance of AlgBlockInterface.
+    if (!self::$blocks[$delta] instanceof AlgBlockInterface) {
+      throw new Exception(t("La classe du block %delta n'implemente pas l'interface AlgBlockInterface", array('%delta' => $delta)));
     }
     return self::$blocks[$delta];
   }
@@ -56,12 +69,36 @@ class AlgBlockRouter {
    * List all block which are in module blocks dir
    *
    * @return array
+   *   An array of block descriptions.
    */
   public function listBlock() {
     $blocks = array();
+    $rids = array();
 
     foreach (array_keys(self::$blocks) as $delta) {
-      $blocks[$delta] = $this->getBlockInstance($delta)->getInfo();
+      try {
+        // Get block object.
+        $block = $this->getBlockInstance($delta);
+
+        // Set block list.
+        $blocks[$delta] = $block->getInfo();
+
+        // Set block roles.
+        $rids = $block->getRoles();
+
+        if (!empty($rids)) {
+          $args_default = array(self::MODULE_NAME, $delta);
+          $args_roles = array_merge($rids, $args_default);
+
+          $num_rows = db_result(db_query('SELECT COUNT(*) FROM {blocks_roles} WHERE module = "%s" AND delta = "%s"', $args_default));
+          if ($num_rows != count($rids)) {
+            db_query('DELETE FROM {blocks_roles} WHERE module = "%s" AND delta = "%s"', $args_default);
+            db_query('INSERT INTO {blocks_roles} (rid, module, delta) VALUES (' . db_placeholders($rids, 'int') . ', "%s", "%s")', $args_roles);
+          }
+        }
+      } catch (Exception $exc) {
+        debug_print($exc->getMessage());
+      }
     }
 
     return $blocks;
@@ -71,8 +108,12 @@ class AlgBlockRouter {
    * View block delta
    *
    * @param string $delta
+   *   Which block to return.
    *
    * @return array
+   *   return an array which must define a 'subject' element
+   *   (the localized block title) and a 'content' element
+   *   (the block body) defining the block indexed by $delta.
    */
   public function viewBlock($delta) {
     if (isset(self::$blocks[$delta])) {
@@ -80,12 +121,26 @@ class AlgBlockRouter {
     }
   }
 
+  /**
+   * Configuration form for the block.
+   *
+   * @param type $delta
+   *   Which block to return.
+   */
   public function configureBlock($delta) {
 
   }
 
+  /**
+   * Save the configuration options.
+   *
+   * @param type $delta
+   *   Which block to return.
+   * @param type $edit
+   *   The submitted form data from the configuration form.
+   */
   public function saveBlock($delta, $edit) {
-    
+
   }
 
 }
