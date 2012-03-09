@@ -8,16 +8,6 @@
 require_once __DIR__ . '/alg_block.interface.inc';
 
 /**
- * Implements hook_alg_block_router().
- */
-function alg_block_alg_block_router() {
-  return array(
-    'mes_documents' => __DIR__ . '/blocks/mes_documents.block.inc',
-    'mes_fichiers' => __DIR__ . '/blocks/mes_fichiers.block.inc',
-  );
-}
-
-/**
  * Implements hook_block().
  *
  * @param string $op
@@ -30,23 +20,15 @@ function alg_block_alg_block_router() {
  */
 function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
   // Get router instance.
-  require_once drupal_get_path('module', 'alg_block') . '/alg_block.router.inc';
+  module_load_include('inc', 'alg_block', 'alg_block.router');
   $router = AlgBlockRouter::getInstance();
 
   switch ($op) {
     case 'list':
       return $router->listBlock();
       break;
-    case 'configure':
-      return $router->configureBlock($delta);
-      break;
-    case 'save':
-      return $router->saveBlock($delta, $edit);
-      break;
     case 'view':
       return $router->viewBlock($delta);
-      break;
-    default:
       break;
   }
 }

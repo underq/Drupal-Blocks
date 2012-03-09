@@ -121,26 +121,4 @@ final class AlgBlockRouter {
     }
   }
 
-  /**
-   * Configuration form for the block.
-   *
-   * @param type $delta
-   *   Which block to return.
-   */
-  public function configureBlock($delta) {
-
-  }
-
-  /**
-   * Save the configuration options.
-   *
-   * @param type $delta
-   *   Which block to return.
-   * @param type $edit
-   *   The submitted form data from the configuration form.
-   */
-  public function saveBlock($delta, $edit) {
-
-  }
-
 }

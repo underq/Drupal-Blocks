@@ -1,0 +1,6 @@
+name = ALG Block Exemple
+description = This is an exemple for use Alg Block Engine
+core = 6.x
+php = 5.x
+package = ALG
+dependencies[] = alg_block

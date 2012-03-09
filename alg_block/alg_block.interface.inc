@@ -21,10 +21,4 @@ interface AlgBlockInterface {
    * Get prepared block view.
    */
   public function getView();
-
-  /**
-   * Get prepared block form.
-   */
-  public function getForm();
-
 }

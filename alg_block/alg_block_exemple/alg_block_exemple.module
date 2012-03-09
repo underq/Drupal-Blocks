@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * This one line description  is used so that api.module, Drupal-s automated documentation extractor and formatter
+ *
+ * This part is a longer description aumed at programmers who will be examining our code
+ */
+
+/**
+ * Implements hook_alg_block_router().
+ */
+function alg_block_exemple_alg_block_router() {
+  $blocks = array();
+
+  // Exemple
+  // $blocks = array(
+  //   'Block Class Name' => '__DIR__ Block Class File',
+  // );
+
+  return $blocks;
+}
