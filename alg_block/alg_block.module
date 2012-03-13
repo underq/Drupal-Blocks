@@ -5,7 +5,13 @@
  * This is an handler of block for d6
  */
 
-require_once __DIR__ . '/alg_block.interface.inc';
+/**
+ * Implements of hook_init().
+ */
+function alg_block_init() {
+  module_load_include('router.inc', 'alg_block');
+  module_load_include('interface.inc', 'alg_block');
+}
 
 /**
  * Implements hook_block().
@@ -20,7 +26,6 @@ require_once __DIR__ . '/alg_block.interface.inc';
  */
 function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
   // Get router instance.
-  module_load_include('inc', 'alg_block', 'alg_block.router');
   $router = AlgBlockRouter::getInstance();
 
   switch ($op) {

@@ -90,10 +90,19 @@ final class AlgBlockRouter {
           $args_default = array(self::MODULE_NAME, $delta);
           $args_roles = array_merge($rids, $args_default);
 
-          $num_rows = db_result(db_query('SELECT COUNT(*) FROM {blocks_roles} WHERE module = "%s" AND delta = "%s"', $args_default));
+          $num_rows = db_result(db_query('SELECT COUNT(*) 
+                                            FROM {blocks_roles}
+                                            WHERE module = "%s"
+                                            AND delta = "%s"', $args_default));
           if ($num_rows != count($rids)) {
-            db_query('DELETE FROM {blocks_roles} WHERE module = "%s" AND delta = "%s"', $args_default);
-            db_query('INSERT INTO {blocks_roles} (rid, module, delta) VALUES (' . db_placeholders($rids, 'int') . ', "%s", "%s")', $args_roles);
+            // Suppression des anciens roles existant.
+            db_query('DELETE FROM {blocks_roles} 
+                        WHERE module = "%s"
+                        AND delta = "%s"', $args_default);
+
+            // Insertion des nouveaux roles.
+            db_query('INSERT INTO {blocks_roles} (rid, module, delta)
+                        VALUES (' . db_placeholders($rids, 'int') . ', "%s", "%s")', $args_roles);
           }
         }
       } catch (Exception $exc) {
