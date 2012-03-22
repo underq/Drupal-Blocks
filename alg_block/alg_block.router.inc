@@ -7,7 +7,7 @@
 
 final class AlgBlockRouter {
 
-  private static $blocks = array();
+  private $blocks = array();
   private static $instance = FALSE;
 
   const MODULE_NAME = 'alg_block';
@@ -16,7 +16,7 @@ final class AlgBlockRouter {
    * Constructeur privé
    */
   private function __construct() {
-    self::$blocks = module_invoke_all('alg_block_router');
+    $this->blocks = module_invoke_all('alg_block_router');
   }
 
   /**
@@ -34,7 +34,7 @@ final class AlgBlockRouter {
   public static function getInstance() {
     // Si l'instance n'existe pas encore, alors elle est créée.
     if (self::$instance === FALSE) {
-      self::$instance = new AlgBlockRouter();
+      self::$instance = new self();
     }
     // L'instance existe, on peut la retourner à l'extérieur.
     return self::$instance;
@@ -53,16 +53,16 @@ final class AlgBlockRouter {
   protected function getBlockInstance($delta) {
 
     // Instance Object.
-    if (!is_object(self::$blocks[$delta])) {
-      require_once self::$blocks[$delta];
-      self::$blocks[$delta] = new $delta();
+    if (!is_object($this->blocks[$delta])) {
+      require_once $this->blocks[$delta];
+      $this->blocks[$delta] = new $delta();
     }
 
     // Check instance of AlgBlockInterface.
-    if (!self::$blocks[$delta] instanceof AlgBlockInterface) {
+    if (!$this->blocks[$delta] instanceof AlgBlockInterface) {
       throw new Exception(t("La classe du block %delta n'implemente pas l'interface AlgBlockInterface", array('%delta' => $delta)));
     }
-    return self::$blocks[$delta];
+    return $this->blocks[$delta];
   }
 
   /**
@@ -75,7 +75,7 @@ final class AlgBlockRouter {
     $blocks = array();
     $rids = array();
 
-    foreach (array_keys(self::$blocks) as $delta) {
+    foreach (array_keys($this->blocks) as $delta) {
       try {
         // Get block object.
         $block = $this->getBlockInstance($delta);
@@ -125,7 +125,7 @@ final class AlgBlockRouter {
    *   (the block body) defining the block indexed by $delta.
    */
   public function viewBlock($delta) {
-    if (isset(self::$blocks[$delta])) {
+    if (isset($this->blocks[$delta])) {
       return $this->getBlockInstance($delta)->getView();
     }
   }

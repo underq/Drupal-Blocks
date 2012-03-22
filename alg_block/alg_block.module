@@ -28,12 +28,9 @@ function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
   // Get router instance.
   $router = AlgBlockRouter::getInstance();
 
-  switch ($op) {
-    case 'list':
-      return $router->listBlock();
-      break;
-    case 'view':
-      return $router->viewBlock($delta);
-      break;
+  $function = $op . 'Block';
+  if (method_exists($router, $function)) {
+    return $router->$function($delta);
   }
+  return FALSE;
 }
