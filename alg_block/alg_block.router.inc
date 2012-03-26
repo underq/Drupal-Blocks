@@ -7,22 +7,22 @@
 
 final class AlgBlockRouter {
 
-  private $blocks = array();
-  private static $instance = FALSE;
+  protected $blocks = array();
+  protected static $instance = FALSE;
 
   const MODULE_NAME = 'alg_block';
 
   /**
    * Constructeur privé
    */
-  private function __construct() {
+  protected function __construct() {
     $this->blocks = module_invoke_all('alg_block_router');
   }
 
   /**
    * Le clonage interdit
    */
-  private function __clone() {
+  protected function __clone() {
 
   }
 
