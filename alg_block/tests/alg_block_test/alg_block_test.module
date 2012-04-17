@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Alg block test module file
+ */
+
+/**
+ * Implements hook_alg_block_router().
+ */
+function alg_block_test_alg_block_router() {
+  return array(
+    // Block found.
+    'BlockTest1' => __DIR__ . '/blocks/blockTest1.inc',
+    // Block implements not found.
+    'BlockTest2' => __DIR__ . '/blocks/blockTest2.inc',
+    // Block found.
+    'BlockTest3' => __DIR__ . '/blocks/blockTest3.inc',
+  );
+}

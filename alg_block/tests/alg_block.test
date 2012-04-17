@@ -1,0 +1,77 @@
+<?php
+/**
+ * @file
+ * File test case
+ */
+
+class AlgBlockTestCase extends DrupalWebTestCase {
+
+  protected $adminUser;
+  protected $router;
+
+  /**
+   * Implementation of getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('Alg Block Router'),
+      'description' => t('Test engine of block router'),
+      'group' => t('ALG'),
+    );
+  }
+
+  /**
+   * Implementation of setUp().
+   */
+  function setUp() {
+    parent::setUp('alg_general_lib', 'alg_block', 'alg_block_test');
+
+    // Create and login user.
+    $this->adminUser = $this->drupalCreateUser(array('administer blocks'));
+    $this->drupalLogin($this->adminUser);
+
+    $this->router = AlgBlockRouter::getInstance();
+  }
+
+  /**
+   * Test
+   */
+  function testListBlock() {
+    // Define block list.
+    $this->assertTrue($this->router->listBlock());
+
+    $this->drupalGet('admin/build/block');
+    $this->assertText('blockTest1');
+    $this->assertText("La classe du block BlockTest2 n'implemente pas l'interface AlgBlockInterface");
+  }
+
+  /**
+   * Test
+   */
+  function testViewBlock() {
+    // Define view return.
+    $view = array(
+      'subject' => 'blockTest1',
+      'content' => 'test',
+    );
+
+    $this->assertEqual($view, $this->router->viewBlock('BlockTest1'));
+  }
+
+  /**
+   * Test
+   */
+  function testRoleBlock() {
+
+    // Define roles.
+    $roles_test1 = array();
+    $roles_test3 = array(2);
+
+    // Create block object.
+    $block1 = $this->router->getBlockInstance('BlockTest1');
+    $block3 = $this->router->getBlockInstance('BlockTest3');
+
+    $this->assertEqual($roles_test1, $this->router->applyRoles($block1));
+    $this->assertEqual($roles_test3, $this->router->applyRoles($block3));
+  }
+}

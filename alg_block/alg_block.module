@@ -6,31 +6,81 @@
  */
 
 /**
- * Implements of hook_init().
+ * Defines the administration page for this module.
  */
-function alg_block_init() {
+function alg_block_admin() {
+  $form = array();
+
+  $form['visibility'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('ALG Block visibility'),
+    '#tree' => TRUE,
+  );
+  $form['visibility']['update'] = array(
+    '#type' => 'submit',
+    '#value' => t('Update block visibility'),
+  );
+
+  return $form;
+}
+
+/**
+ * Callback function after a submit from the administration page of this module.
+ */
+function alg_block_admin_submit() {
   module_load_include('router.inc', 'alg_block');
-  module_load_include('interface.inc', 'alg_block');
+  $router = AlgBlockRouter::getInstance(TRUE);
+  $router->applyRolesAll();
+
+  drupal_set_message(t('Visibility updated'));
+}
+
+/**
+ * Implements hook_menu().
+ */
+function alg_block_menu() {
+  $items = array();
+
+  $items['admin/settings/alg_block'] = array(
+    'title' => 'ALG Block',
+    'description' => 'Administration page of ALG Block module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('alg_block_admin'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_flush_cache().
+ */
+function alg_block_flush_caches() {
+  module_load_include('router.inc', 'alg_block');
+  $router = AlgBlockRouter::getInstance(TRUE);
+  $router->applyRolesAll();
 }
 
 /**
  * Implements hook_block().
- *
- * @param string $op
- *   What kind of information to retrieve about the block.
- *   Possible values: list, configure, save, view.
- * @param string $delta
- *   Which block to return.
- * @param array $edit
- *   Data from a configuration form, if submitted.
  */
 function alg_block_block($op = 'list', $delta = 0, $edit = array()) {
   // Get router instance.
+  module_load_include('router.inc', 'alg_block');
   $router = AlgBlockRouter::getInstance();
 
-  $function = $op . 'Block';
-  if (method_exists($router, $function)) {
-    return $router->$function($delta);
+  switch ($op) {
+    case 'list':
+      return $router->listBlock();
+      break;
+
+    case 'view':
+      return $router->viewBlock($delta);
+      break;
+
+    default:
+      return FALSE;
+      break;
   }
-  return FALSE;
 }

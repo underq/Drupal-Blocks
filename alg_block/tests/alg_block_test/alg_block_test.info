@@ -1,0 +1,7 @@
+name = ALG Block Test
+description = Alg block testing module
+core = 6.x
+php = 5.x
+package = ALG
+dependencies[] = alg_block
+hidden = TRUE
